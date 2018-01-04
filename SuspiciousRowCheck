@@ -1,0 +1,74 @@
+Sub SuspiciousRowCheck()
+
+Dim targetBook As Workbook
+Dim targetSheet As Worksheet
+
+'現在操作中のブックを取得します
+Set targetBook = Application.ActiveWorkbook
+
+Dim threshLength As Integer 
+threshLength = Val(InputBox("確認対象とするセルの文字数を入力してください", "文字数入力", "200"))
+
+For Each targetSheet In targetBook.Worksheets  
+   targetSheet.Select 
+   '列数を取得します
+   Dim MaxCol As Integer
+   MaxCol = targetSheet.Range("A1").End(xlToRight).Column
+   Dim colIndex As Integer 
+   colIndex = 1   
+   
+   Dim isDel As Boolean 
+   Do While colIndex <= MaxCol 
+   isDel = CheckRow(targetSheet, colIndex, threshLength)  
+   If isDel Then   
+      targetSheet.Columns(colIndex).Select  
+      targetSheet.Columns(colIndex).Delete     
+      MaxCol = MaxCol - 1           
+   Else      
+      colIndex = colIndex + 1   
+   End If    
+   Loop    
+   Next    
+   
+   Call MsgBox("このブックの探索が完了しました", vbYes, "")
+   
+End Sub
+
+
+
+Function CheckRow(targetSheet As Worksheet, colIndex As Integer, threshLength As Integer) As Boolean 
+   CheckRow = False   
+   
+   MaxRow = targetSheet.Cells(1, colIndex).Select  
+   MaxRow = targetSheet.Cells(1, colIndex).End(xlDown).Row 
+   Dim rowIndex As Integer  
+   rowIndex = 1   
+   Do While rowIndex < MaxRow    
+      If Len(targetSheet.Cells(rowIndex, colIndex).Value) >= threshLength Then      
+      Dim ans As Integer, Reply As String   
+      targetSheet.Cells(rowIndex, colIndex).Select       
+      ans = MsgBox("この列を削除しても良いですか？" & vbCrLf & "はい：削除" & vbCrLf & "いいえ：同列を探索" & vbCrLf & "キャンセル:次の列へ", vbYesNoCancel, "")                       
+      
+      Select Case ans      
+      Case Is = 6             
+      Reply = "はい"          
+      CheckRow = True    
+      Exit Function          
+      Case Is = 7              
+      Reply = "いいえ"          
+      CheckRow = False           
+      Case Is = 2                
+      Reply = "キャンセル"          
+      CheckRow = False          
+      Exit Function         
+   End Select           
+   
+   End If               
+   
+On Error GoTo ROW_INDEX_OERVERFLOW  
+rowIndex = rowIndex + 1   
+Loop
+
+ROW_INDEX_OERVERFLOW:  
+
+End Function
