@@ -1,0 +1,10 @@
+Sub select_all_sheets()
+' ブックの全シートに対して任意の関数を処理する。ここでは、グラフを作成する。
+
+Dim i As Integer
+For i = 1 To Worksheets.Count
+Sheets(Sheets(i).Name).Select 
+' 任意の関数を指定します。
+Call data_cleansing  
+Next i    
+End Sub
