@@ -1,0 +1,20 @@
+Sub files_in_dir()
+'
+' ディレクトリ内の全csvを対象に任意の関数を実行する。
+
+Dim myPath As String
+Dim myFile As String
+
+myPath = "d:\data\"
+myFile = Dir(myPath & "*csv")
+
+Do Until myFile = ""
+   Workbooks.Open myPath & myFile
+   Call only_text_test # ここに任意の関数を指定する。
+   myFile = Dir()
+Loop
+
+Application.Quit
+MsgBox ("処理が完了しました。")
+
+End Sub
