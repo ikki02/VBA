@@ -1,0 +1,21 @@
+Sub extract_and_save_column()
+' 特定カラム（テキストデータ想定）を抽出し
+' csvファイルを任意のディレクトリに任意のファイル名で保存する。
+'
+
+Dim y As String
+Dim fn As String
+
+y = ActiveSheet.Cells(2, 3).Value
+fn = "C:\Users\ikki_ikazaki\Desktop\output\" & y & ".csv"  
+
+   Columns("H:H").Select
+   Selection.Copy  
+   Sheets.Add After:=ActiveSheet 
+   ActiveSheet.Paste  
+   Application.CutCopyMode = False  
+   ActiveSheet.Range("A1").Select  
+   ActiveWorkbook.SaveAs Filename:=fn, _    
+   FileFormat:=xlCSV, CreateBackup:=False   
+   ActiveWorkbook.Close SaveChanges:=True
+End Sub
